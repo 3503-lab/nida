@@ -810,4 +810,139 @@ function checkRememberedUser() {
         // Otomatik giriş yapmak istiyorsanız bu satırı ekleyin
         // login();
     }
+}
+
+// Aylık rapor modalını göster
+function showMonthlyReport() {
+    const modal = document.getElementById('monthlyReportModal');
+    modal.style.display = 'flex';
+    generateMonthlyReport();
+}
+
+// Rapor modalını kapat
+function closeReportModal() {
+    document.getElementById('monthlyReportModal').style.display = 'none';
+}
+
+// Aylık rapor oluştur
+function generateMonthlyReport() {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
+    // Ay içindeki siparişleri filtrele
+    const monthlyOrders = orders.filter(order => {
+        const orderDate = new Date(order.date.split('.').reverse().join('-'));
+        return orderDate.getMonth() === currentMonth && 
+               orderDate.getFullYear() === currentYear;
+    });
+
+    // Özet bilgileri hesapla
+    const summary = {
+        totalOrders: monthlyOrders.length,
+        totalPersons: monthlyOrders.reduce((sum, order) => sum + parseInt(order.personCount), 0),
+        companies: {}
+    };
+
+    // Şirket bazlı istatistikler
+    monthlyOrders.forEach(order => {
+        if (!summary.companies[order.company]) {
+            summary.companies[order.company] = {
+                orders: 0,
+                persons: 0
+            };
+        }
+        summary.companies[order.company].orders++;
+        summary.companies[order.company].persons += parseInt(order.personCount);
+    });
+
+    // Özet raporu göster
+    const summaryHTML = `
+        <div class="report-item">
+            <p><strong>Toplam Sipariş:</strong> ${summary.totalOrders}</p>
+            <p><strong>Toplam Kişi:</strong> ${summary.totalPersons}</p>
+        </div>
+        <h4>Şirket Bazlı Dağılım</h4>
+        ${Object.entries(summary.companies).map(([company, stats]) => `
+            <div class="report-item">
+                <p><strong>${company}</strong></p>
+                <p>Sipariş Sayısı: ${stats.orders}</p>
+                <p>Toplam Kişi: ${stats.persons}</p>
+            </div>
+        `).join('')}
+    `;
+
+    // Detaylı raporu göster
+    const detailsHTML = monthlyOrders.map(order => `
+        <div class="report-item">
+            <p><strong>Tarih:</strong> ${order.date}</p>
+            <p><strong>Şirket:</strong> ${order.company}</p>
+            <p><strong>Kişi:</strong> ${order.userName}</p>
+            <p><strong>Kişi Sayısı:</strong> ${order.personCount}</p>
+            <p><strong>Durum:</strong> ${order.status}</p>
+            ${order.note ? `<p><strong>Not:</strong> ${order.note}</p>` : ''}
+        </div>
+    `).join('');
+
+    document.getElementById('reportSummary').innerHTML = summaryHTML;
+    document.getElementById('reportDetails').innerHTML = detailsHTML;
+}
+
+// Raporu CSV olarak dışa aktar
+function exportReport() {
+    const currentDate = new Date();
+    const monthYear = `${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
+    
+    let csvContent = "Tarih,Şirket,Kişi,Kişi Sayısı,Durum,Not\n";
+    
+    const monthlyOrders = orders.filter(order => {
+        const orderDate = new Date(order.date.split('.').reverse().join('-'));
+        return orderDate.getMonth() === currentDate.getMonth() && 
+               orderDate.getFullYear() === currentDate.getFullYear();
+    });
+
+    monthlyOrders.forEach(order => {
+        csvContent += `${order.date},${order.company},${order.userName},${order.personCount},${order.status},"${order.note || ''}"\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `siparis-raporu-${monthYear}.csv`;
+    link.click();
+}
+
+// Siparişleri arşivle ve temizle
+function archiveAndClearOrders() {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
+    // Arşivlenecek siparişleri filtrele
+    const ordersToArchive = orders.filter(order => {
+        const orderDate = new Date(order.date.split('.').reverse().join('-'));
+        return orderDate.getMonth() === currentMonth && 
+               orderDate.getFullYear() === currentYear;
+    });
+
+    // Arşivi localStorage'dan al veya yeni oluştur
+    let archives = JSON.parse(localStorage.getItem('orderArchives')) || {};
+    const archiveKey = `${currentMonth + 1}-${currentYear}`;
+    
+    // Mevcut ayın siparişlerini arşive ekle
+    archives[archiveKey] = ordersToArchive;
+    localStorage.setItem('orderArchives', JSON.stringify(archives));
+
+    // Mevcut siparişlerden arşivlenenleri çıkar
+    orders = orders.filter(order => {
+        const orderDate = new Date(order.date.split('.').reverse().join('-'));
+        return orderDate.getMonth() !== currentMonth || 
+               orderDate.getFullYear() !== currentYear;
+    });
+
+    // Güncel siparişleri kaydet
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    alert('Siparişler başarıyla arşivlendi ve temizlendi!');
+    closeReportModal();
 } 

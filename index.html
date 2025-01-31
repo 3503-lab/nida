@@ -8,8 +8,8 @@
 </head>
 <body>
     <div class="fixed-logos">
-        <img src="images/nida-logo.png" alt="Nida Yemek Logo" class="fixed-logo left">
-        <img src="images/nida-logo.png" alt="Nida Yemek Logo" class="fixed-logo right">
+        <img src="/nida-logo.png" alt="Nida Yemek Logo" class="fixed-logo left">
+        <img src="/nida-logo.png" alt="Nida Yemek Logo" class="fixed-logo right">
     </div>
     <div class="container">
         <h1>Nida Yemek</h1>
@@ -168,6 +168,9 @@
             <h2>Admin Paneli</h2>
             <div class="admin-menu">
                 <button onclick="adminUpdateMenu()">Günlük Menüyü Güncelle</button>
+                <button onclick="showMonthlyReport()" class="report-button">
+                    <i class="fas fa-file-alt"></i> Aylık Rapor Görüntüle
+                </button>
             </div>
             
             <div class="upload-section">
@@ -312,6 +315,32 @@
                 <!-- Bildirimler buraya gelecek -->
             </div>
             <button onclick="showHomeSection()" class="back-button">Ana Sayfaya Dön</button>
+        </div>
+
+        <!-- Aylık Rapor Modal -->
+        <div id="monthlyReportModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3>Aylık Sipariş Raporu</h3>
+                <div class="report-content">
+                    <div class="report-summary">
+                        <h4>Özet Bilgiler</h4>
+                        <div id="reportSummary"></div>
+                    </div>
+                    <div class="report-details">
+                        <h4>Detaylı Rapor</h4>
+                        <div id="reportDetails"></div>
+                    </div>
+                    <div class="report-actions">
+                        <button onclick="exportReport()" class="export-button">
+                            <i class="fas fa-download"></i> Raporu İndir
+                        </button>
+                        <button onclick="archiveAndClearOrders()" class="archive-button">
+                            <i class="fas fa-archive"></i> Arşivle ve Temizle
+                        </button>
+                        <button onclick="closeReportModal()" class="cancel-button">Kapat</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
