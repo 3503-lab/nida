@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Günün Menüsü</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="fixed-logos">
+        <img src="images/nida-logo.png" alt="Nida Yemek Logo" class="fixed-logo left">
+        <img src="images/nida-logo.png" alt="Nida Yemek Logo" class="fixed-logo right">
+    </div>
+    <div class="container">
+        <h1>Nida Yemek</h1>
+        
+        <!-- Giriş Formu (Ana Sayfa olarak) -->
+        <div id="loginSection" class="form-section">
+            <h2>Giriş</h2>
+            <div class="form-group">
+                <label for="loginPhone">Telefon Numarası:</label>
+                <input type="tel" id="loginPhone" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Şifre:</label>
+                <input type="password" id="loginPassword" required>
+            </div>
+            <div class="form-group remember-me">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="rememberMe">
+                    <span class="checkbox-text">Beni Hatırla</span>
+                </label>
+            </div>
+            <button onclick="login()">Giriş Yap</button>
+            <p class="form-footer">Hesabınız yok mu? <a href="#" onclick="showRegistrationForm()">Kayıt Olun</a></p>
+        </div>
+
+        <!-- Ana Menü (Giriş sonrası görünür) -->
+        <div id="homeSection" class="home-section" style="display: none;">
+            <div class="choice-buttons">
+                <button onclick="showMainContent()" class="choice-button">
+                    <i class="fas fa-utensils"></i>
+                    <span>Sipariş Ver</span>
+                </button>
+                <button onclick="showMonthlyMenu()" class="choice-button">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Aylık Menü</span>
+                </button>
+                <button onclick="showRating()" class="choice-button">
+                    <i class="fas fa-star"></i>
+                    <span>Yemeğinizi Değerlendirin</span>
+                </button>
+            </div>
+            <div class="user-menu-buttons">
+                <button onclick="showOrderHistory()" class="menu-button">
+                    <i class="fas fa-history"></i>
+                    <span>Sipariş Geçmişi</span>
+                </button>
+                <button onclick="showProfile()" class="menu-button">
+                    <i class="fas fa-user"></i>
+                    <span>Profil Düzenle</span>
+                </button>
+                <button onclick="showNotifications()" class="menu-button">
+                    <i class="fas fa-bell"></i>
+                    <span>Bildirimler</span>
+                    <span id="notificationCount" class="notification-badge" style="display: none;">0</span>
+                </button>
+            </div>
+            <button onclick="logout()" class="logout-button">Çıkış Yap</button>
+        </div>
+
+        <!-- Aylık Menü Bölümü -->
+        <div id="monthlyMenuSection" class="monthly-menu-section" style="display: none;">
+            <h2>Aylık Menü</h2>
+            <div class="menu-tabs">
+                <button class="tab-button active" onclick="showMenuTab('breakfast')">Kahvaltı</button>
+                <button class="tab-button" onclick="showMenuTab('lunch')">Öğle Yemeği</button>
+                <button class="tab-button" onclick="showMenuTab('dinner')">Akşam Yemeği</button>
+            </div>
+            
+            <div id="breakfastMenu" class="menu-tab-content">
+                <h3>Kahvaltı Menüsü</h3>
+                <div class="monthly-menu-image">
+                    <img id="breakfastMenuImage" src="" alt="Kahvaltı Menüsü" style="display: none;">
+                </div>
+            </div>
+            
+            <div id="lunchMenu" class="menu-tab-content" style="display: none;">
+                <h3>Öğle Yemeği Menüsü</h3>
+                <div class="monthly-menu-image">
+                    <img id="lunchMenuImage" src="" alt="Öğle Yemeği Menüsü" style="display: none;">
+                </div>
+            </div>
+            
+            <div id="dinnerMenu" class="menu-tab-content" style="display: none;">
+                <h3>Akşam Yemeği Menüsü</h3>
+                <div class="monthly-menu-image">
+                    <img id="dinnerMenuImage" src="" alt="Akşam Yemeği Menüsü" style="display: none;">
+                </div>
+            </div>
+            
+            <button onclick="showHomeSection()" class="back-button">Ana Sayfaya Dön</button>
+        </div>
+
+        <div id="registrationSection" class="form-section" style="display: none;">
+            <h2>Kayıt Formu</h2>
+            <div class="form-group">
+                <label for="regName">Ad:</label>
+                <input type="text" id="regName" required>
+            </div>
+            <div class="form-group">
+                <label for="regSurname">Soyad:</label>
+                <input type="text" id="regSurname" required>
+            </div>
+            <div class="form-group">
+                <label for="regCompany">Şirket İsmi:</label>
+                <input type="text" id="regCompany" required>
+            </div>
+            <div class="form-group">
+                <label for="regPhone">Telefon:</label>
+                <input type="tel" id="regPhone" required placeholder="5XX XXX XX XX" maxlength="10">
+                <small class="input-help">
+                    • Başında 0 olmadan 10 haneli olarak girin<br>
+                    • Numara 5 ile başlamalıdır<br>
+                    • Örnek: 5XX XXX XX XX
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Şifre:</label>
+                <input type="password" id="regPassword" required>
+            </div>
+            <div class="form-group">
+                <label for="regPasswordConfirm">Şifre Tekrar:</label>
+                <input type="password" id="regPasswordConfirm" required>
+            </div>
+            <button onclick="register()">Kayıt Ol</button>
+            <p class="form-footer">Zaten hesabınız var mı? <a href="#" onclick="showLoginForm()">Giriş Yapın</a></p>
+        </div>
+
+        <div id="mainContent" style="display: none;">
+            <div id="menu" class="menu-container">
+                <!-- Menü buraya eklenecek -->
+            </div>
+
+            <div class="order-form">
+                <h2>Sipariş Ver</h2>
+                <div class="user-info">
+                    <p><strong>Hoş Geldiniz:</strong> <span id="userFullName"></span></p>
+                    <p><strong>Şirket:</strong> <span id="userCompany"></span></p>
+                </div>
+                <div class="form-group">
+                    <label for="personCount">Kişi Sayısı:</label>
+                    <input type="number" id="personCount" min="1" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="orderNote">Özel İstekler / Notlar:</label>
+                    <textarea id="orderNote" rows="3" placeholder="Varsa özel isteklerinizi buraya yazabilirsiniz..."></textarea>
+                </div>
+                <button onclick="submitOrder()">Sipariş Ver</button>
+            </div>
+            
+            <!-- Ana sayfaya dön butonu -->
+            <button onclick="showHomeSection()" class="back-button">Ana Sayfaya Dön</button>
+        </div>
+
+        <!-- Admin panelini güncelle -->
+        <div id="adminPanel" class="admin-panel" style="display: none;">
+            <h2>Admin Paneli</h2>
+            <div class="admin-menu">
+                <button onclick="adminUpdateMenu()">Günlük Menüyü Güncelle</button>
+            </div>
+            
+            <div class="upload-section">
+                <h3>Aylık Menü Fotoğrafları</h3>
+                <div class="upload-buttons">
+                    <label for="uploadBreakfastMenu" class="upload-label">
+                        <i class="fas fa-coffee"></i> Kahvaltı Menüsü Yükle
+                    </label>
+                    <input type="file" id="uploadBreakfastMenu" accept="image/*" 
+                           onchange="uploadMonthlyMenu(this, 'breakfast')" style="display: none;">
+                    
+                    <label for="uploadLunchMenu" class="upload-label">
+                        <i class="fas fa-sun"></i> Öğle Menüsü Yükle
+                    </label>
+                    <input type="file" id="uploadLunchMenu" accept="image/*" 
+                           onchange="uploadMonthlyMenu(this, 'lunch')" style="display: none;">
+                    
+                    <label for="uploadDinnerMenu" class="upload-label">
+                        <i class="fas fa-moon"></i> Akşam Menüsü Yükle
+                    </label>
+                    <input type="file" id="uploadDinnerMenu" accept="image/*" 
+                           onchange="uploadMonthlyMenu(this, 'dinner')" style="display: none;">
+                </div>
+            </div>
+            
+            <div id="ordersList" class="orders-list">
+                <!-- Siparişler buraya eklenecek -->
+            </div>
+            
+            <button onclick="showLoginForm()" class="logout-button">Çıkış Yap</button>
+        </div>
+
+        <!-- Değerlendirme bölümü -->
+        <div id="ratingSection" class="rating-section" style="display: none;">
+            <h2>Yemek Değerlendirme</h2>
+            <div class="rating-container">
+                <div class="stars">
+                    <i class="far fa-star" data-rating="1"></i>
+                    <i class="far fa-star" data-rating="2"></i>
+                    <i class="far fa-star" data-rating="3"></i>
+                    <i class="far fa-star" data-rating="4"></i>
+                    <i class="far fa-star" data-rating="5"></i>
+                </div>
+                <p class="rating-text">Puanınız: <span id="ratingValue">0</span>/5</p>
+                <div class="form-group">
+                    <label for="ratingComment">Yorumunuz (İsteğe bağlı):</label>
+                    <textarea id="ratingComment" rows="4"></textarea>
+                </div>
+                <button onclick="submitRating()">Değerlendirmeyi Gönder</button>
+            </div>
+            <button onclick="showHomeSection()" class="back-button">Ana Sayfaya Dön</button>
+        </div>
+
+        <!-- Admin Menü Güncelleme Modal -->
+        <div id="menuUpdateModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3>Günlük Menü Güncelleme</h3>
+                <div class="menu-update-form">
+                    <div class="menu-items">
+                        <div class="menu-item-input">
+                            <label>Çorba:</label>
+                            <input type="text" id="menuSoup" placeholder="Çorba çeşidi">
+                        </div>
+                        <div class="menu-item-input">
+                            <label>Ana Yemek:</label>
+                            <input type="text" id="menuMain" placeholder="Ana yemek">
+                        </div>
+                        <div class="menu-item-input">
+                            <label>Yan Yemek:</label>
+                            <input type="text" id="menuSide" placeholder="Pilav/Makarna vb.">
+                        </div>
+                        <div class="menu-item-input">
+                            <label>Salata/Meze:</label>
+                            <input type="text" id="menuSalad" placeholder="Salata/Meze">
+                        </div>
+                        <div class="menu-item-input">
+                            <label>Tatlı:</label>
+                            <input type="text" id="menuDessert" placeholder="Tatlı">
+                        </div>
+                    </div>
+                    <div class="modal-buttons">
+                        <button onclick="updateMenuFromForm()">Menüyü Güncelle</button>
+                        <button onclick="closeMenuModal()" class="cancel-button">İptal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sipariş Geçmişi Bölümü -->
+        <div id="orderHistorySection" class="section" style="display: none;">
+            <h2>Sipariş Geçmişi</h2>
+            <div id="orderHistoryList" class="history-list">
+                <!-- Siparişler buraya gelecek -->
+            </div>
+            <button onclick="showHomeSection()" class="back-button">Ana Sayfaya Dön</button>
+        </div>
+
+        <!-- Profil Düzenleme Bölümü -->
+        <div id="profileSection" class="section" style="display: none;">
+            <h2>Profil Düzenle</h2>
+            <div class="profile-form">
+                <div class="form-group">
+                    <label for="editName">Ad:</label>
+                    <input type="text" id="editName">
+                </div>
+                <div class="form-group">
+                    <label for="editSurname">Soyad:</label>
+                    <input type="text" id="editSurname">
+                </div>
+                <div class="form-group">
+                    <label for="editCompany">Şirket İsmi:</label>
+                    <input type="text" id="editCompany">
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Telefon:</label>
+                    <input type="tel" id="editPhone" readonly>
+                </div>
+                <button onclick="updateProfile()">Profili Güncelle</button>
+                
+                <h3>Şifre Değiştir</h3>
+                <div class="form-group">
+                    <label for="currentPassword">Mevcut Şifre:</label>
+                    <input type="password" id="currentPassword">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Yeni Şifre:</label>
+                    <input type="password" id="newPassword">
+                </div>
+                <div class="form-group">
+                    <label for="confirmNewPassword">Yeni Şifre Tekrar:</label>
+                    <input type="password" id="confirmNewPassword">
+                </div>
+                <button onclick="updatePassword()">Şifreyi Güncelle</button>
+            </div>
+            <button onclick="showHomeSection()" class="back-button">Ana Sayfaya Dön</button>
+        </div>
+
+        <!-- Bildirimler Bölümü -->
+        <div id="notificationsSection" class="section" style="display: none;">
+            <h2>Bildirimler</h2>
+            <div id="notificationsList" class="notifications-list">
+                <!-- Bildirimler buraya gelecek -->
+            </div>
+            <button onclick="showHomeSection()" class="back-button">Ana Sayfaya Dön</button>
+        </div>
+    </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="script.js"></script>
+</body>
+</html> 
